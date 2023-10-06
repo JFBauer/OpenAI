@@ -10,7 +10,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "laravel/framework": "^10.10"
+        "laravel/framework": "^10.10",
+        "guzzlehttp/guzzle": "^7.8"
     },
     "autoload": {
         "psr-4": {
