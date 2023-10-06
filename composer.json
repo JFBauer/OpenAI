@@ -1,5 +1,5 @@
 {
-    "name": "jfbauer/openai4laravel",
+    "name": "jfbauer/openai",
     "description": "This package gives you access to all the API necessary functionalities from OpenAI.",
     "type": "library",
     "authors": [
