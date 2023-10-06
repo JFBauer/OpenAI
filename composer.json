@@ -1,0 +1,30 @@
+{
+    "name": "jfbauer/openai4laravel",
+    "description": "This package gives you access to all the API necessary functionalities from OpenAI.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Jasper Bauer",
+            "email": "jasper@jasperbauer.nl"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "laravel/framework": "^10.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "JFBauer\\OpenAI\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JFBauer\\OpenAI\\ServiceProvider"
+            ],
+            "aliases": {
+                "OpenAI": "JFBauer\\OpenAI\\Facade"
+            }
+        }
+    }
+}
