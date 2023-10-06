@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 
 class OpenAI
 {
+    protected string $baseUrl = 'https://api.openai.com';
     protected string|null $apiKey;
 
     /**
@@ -21,19 +22,24 @@ class OpenAI
         }
     }
 
-    public function completionTest($prompt)
+    public function chatCompletions($messages, $model = "gpt-3.5-turbo", $temperature = 1, $maxTokens = 256, $topP = 1, $frequencyPenalty = 0, $presencePenalty = 0, $stop = [])
     {
         $client = new Client();
 
-        $response = $client->post('https://api.openai.com/v1/engines/davinci-codex/completions', [
+        $response = $client->post($this->baseUrl.'/v1/chat/completions', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json',
-                'User-Agent' => 'Laravel-OpenAI-Client'
+                'Content-Type' => 'application/json'
             ],
             'json' => [
-                'prompt' => $prompt,
-                'max_tokens' => 150
+                'model' => $model,
+                'messages' => $messages,
+                'temperature' => $temperature,
+                'max_tokens' => $maxTokens,
+                'top_p' => $topP,
+                'frequency_penalty' => $frequencyPenalty,
+                'presence_penalty' => $presencePenalty,
+                'stop' => $stop
             ]
         ]);
 
