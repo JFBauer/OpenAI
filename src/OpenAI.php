@@ -21,7 +21,7 @@ class OpenAI
         }
     }
 
-    public function callOpenAI(Request $request)
+    public function completionTest($prompt)
     {
         $client = new Client();
 
@@ -32,7 +32,7 @@ class OpenAI
                 'User-Agent' => 'Laravel-OpenAI-Client'
             ],
             'json' => [
-                'prompt' => "Translate the following English text to French: 'Hello, how are you?'",
+                'prompt' => $prompt,
                 'max_tokens' => 150
             ]
         ]);
