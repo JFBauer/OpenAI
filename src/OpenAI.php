@@ -22,7 +22,7 @@ class OpenAI
         }
     }
 
-    public function chatCompletions($messages, $model = "gpt-3.5-turbo", $temperature = 1, $maxTokens = 256, $topP = 1, $frequencyPenalty = 0, $presencePenalty = 0, $stop = [])
+    public function chat($messages, $model = "gpt-3.5-turbo", $temperature = 1, $maxTokens = 256, $topP = 1, $frequencyPenalty = 0, $presencePenalty = 0, $stop = [])
     {
         $client = new Client();
 
@@ -40,11 +40,39 @@ class OpenAI
                 'frequency_penalty' => $frequencyPenalty,
                 'presence_penalty' => $presencePenalty,
                 'stop' => $stop
-            ]
+            ],
+            'stream' => false
         ]);
 
         $response = json_decode($response->getBody(), true);
 
         return $response;
+    }
+
+    public function chatStream($messages, $model = "gpt-3.5-turbo", $temperature = 1, $maxTokens = 256, $topP = 1, $frequencyPenalty = 0, $presencePenalty = 0, $stop = [])
+    {
+        $client = new Client();
+
+        $response = $client->post($this->baseUrl.'/v1/chat/completions', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Content-Type' => 'application/json'
+            ],
+            'json' => [
+                'model' => $model,
+                'messages' => $messages,
+                'temperature' => $temperature,
+                'max_tokens' => $maxTokens,
+                'top_p' => $topP,
+                'frequency_penalty' => $frequencyPenalty,
+                'presence_penalty' => $presencePenalty,
+                'stop' => $stop
+            ],
+            'stream' => true
+        ]);
+
+        $response = json_decode($response->getBody(), true);
+
+        return $response->getBody();
     }
 }
