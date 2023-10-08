@@ -11,6 +11,7 @@ class ChatClient
     protected string $baseUrl = 'https://api.openai.com';
     protected string|null $apiKey;
     private $dataBuffer = "";
+    private $streamResponse = "";
 
     /**
      * @param $apiKey
@@ -58,8 +59,9 @@ class ChatClient
 
     /**
      * @param $messages
+     * @param callable|null $streamRawResponseHandler
      * @param ChatOptions|null $options
-     * @return void
+     * @return string
      */
     public function chatStreamResponse($messages, callable $streamRawResponseHandler = null, ChatOptions $options = null)
     {
@@ -90,6 +92,8 @@ class ChatClient
 
         curl_exec($ch);
         curl_close($ch);
+
+        return $this->streamResponse;
     }
 
     /**
@@ -123,11 +127,15 @@ class ChatClient
     {
         $decodedResponse = json_decode($rawResponse, true);
 
-        // Here you can process each full message block
-        if(isset($decodedResponse['choices'][0]['delta']['content'])) {
-            echo $decodedResponse['choices'][0]['delta']['content'];
-        } else {
+        if(!isset($decodedResponse['choices'][0]['delta']['content'])) {
             echo PHP_EOL;
+            return;
         }
+
+        $content = $decodedResponse['choices'][0]['delta']['content'];
+
+        // Here you can process each full message block
+        echo $content;
+        $this->streamResponse .= $content;
     }
 }
