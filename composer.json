@@ -11,7 +11,7 @@
     "minimum-stability": "stable",
     "require": {
         "laravel/framework": "^10.10",
-        "guzzlehttp/guzzle": "^7.8"
+        "ext-curl": "*"
     },
     "autoload": {
         "psr-4": {

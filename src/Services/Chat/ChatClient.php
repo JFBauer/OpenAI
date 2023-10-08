@@ -2,8 +2,6 @@
 
 namespace JFBauer\OpenAI\Services\Chat;
 
-use GuzzleHttp\Client;
-
 /**
  * Class ChatClient
  * @package JFBauer\OpenAI\Services\Chat
@@ -34,8 +32,6 @@ class ChatClient
      */
     public function chatFullResponse($messages, ChatOptions $options = null)
     {
-        $client = new Client();
-
         if(!isset($options)) {
             $options = new ChatOptions();
         }
@@ -43,16 +39,19 @@ class ChatClient
         $jsonData = $options->toArray();
         $jsonData['messages'] = $messages;
 
-        $rawResponse = $client->post($this->baseUrl.'/v1/chat/completions', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json'
-            ],
-            'json' => $jsonData,
-            'stream' => false
+        $ch = curl_init($this->baseUrl.'/v1/chat/completions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $this->apiKey,
+            'Content-Type: application/json'
         ]);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($jsonData));
 
-        $decodedResponse = json_decode($rawResponse->getBody(), true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        $decodedResponse = json_decode($response, true);
 
         return $decodedResponse;
     }
@@ -60,12 +59,10 @@ class ChatClient
     /**
      * @param $messages
      * @param ChatOptions|null $options
-     * @return mixed
+     * @return void
      */
     public function chatStreamResponse($messages, ChatOptions $options = null)
     {
-        $client = new Client();
-
         if(!isset($options)) {
             $options = new ChatOptions();
         }
@@ -74,25 +71,18 @@ class ChatClient
         $jsonData['messages'] = $messages;
         $jsonData['stream'] = true; // This informs the API that we want a streamed response
 
-        $response = $client->post($this->baseUrl.'/v1/chat/completions', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->apiKey,
-                'Content-Type' => 'application/json'
-            ],
-            'json' => $jsonData,
-            'stream' => true  // This tells Guzzle to stream the response
+        $ch = curl_init($this->baseUrl.'/v1/chat/completions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, [$this, 'processStreamData']);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $this->apiKey,
+            'Content-Type: application/json'
         ]);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($jsonData));
 
-        // Process the response stream
-        $stream = $response->getBody();
-        while (!$stream->eof()) {
-            $dataChunk = $stream->read(1024);  // Read in 1 KB chunks
-            if (!empty($dataChunk)) {
-                $this->processStreamData($dataChunk);
-            }
-        }
-
-        return $stream;
+        curl_exec($ch);
+        curl_close($ch);
     }
 
     /**
@@ -123,7 +113,12 @@ class ChatClient
     {
         $decodedResponse = json_decode($rawResponse, true);
         // Here you can process each full message block
-        echo $decodedResponse['choices'][0]['message']['content'].PHP_EOL;
+        if(isset($decodedResponse['choices'][0]['delta']['content'])) {
+            echo $decodedResponse['choices'][0]['delta']['content'];
+        } else {
+            echo PHP_EOL;
+        }
+//        echo json_encode($decodedResponse).PHP_EOL;
         ob_flush();
     }
 }
