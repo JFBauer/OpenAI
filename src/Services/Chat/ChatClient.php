@@ -61,8 +61,12 @@ class ChatClient
      * @param ChatOptions|null $options
      * @return void
      */
-    public function chatStreamResponse($messages, ChatOptions $options = null)
+    public function chatStreamResponse($messages, callable $streamRawResponseHandler = null, ChatOptions $options = null)
     {
+        if(!isset($streamRawResponseHandler)) {
+            $streamRawResponseHandler = [$this, 'streamRawResponseHandler'];
+        }
+
         if(!isset($options)) {
             $options = new ChatOptions();
         }
@@ -73,6 +77,10 @@ class ChatClient
 
         $ch = curl_init($this->baseUrl.'/v1/chat/completions');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($ch, $data) use ($streamRawResponseHandler) {
+            $this->processStreamData($data, $streamRawResponseHandler);
+            return strlen($data);
+        });
         curl_setopt($ch, CURLOPT_WRITEFUNCTION, [$this, 'processStreamData']);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Authorization: Bearer ' . $this->apiKey,
@@ -86,42 +94,41 @@ class ChatClient
     }
 
     /**
-     * @param $ch
-     * @param $dataChunk
+     * @param $data
+     * @param callable $streamRawResponseHandler
      * @return int
      */
-    private function processStreamData($ch, $dataChunk): int
+    private function processStreamData($data, callable $streamRawResponseHandler): int
     {
-        $this->dataBuffer .= $dataChunk;
+        $this->dataBuffer .= $data;
 
         $pattern = '/data: ({.*?}]})\n/';
         preg_match_all($pattern, $this->dataBuffer, $matches);
 
         // Handle all matched full messages
         foreach ($matches[1] as $rawResponse) {
-            $this->handleFullMessage($rawResponse);
+            $streamRawResponseHandler($rawResponse);
         }
 
         // Remove the matched patterns from the buffer
         $this->dataBuffer = preg_replace($pattern, '', $this->dataBuffer);
 
-        return strlen($dataChunk); // Return the number of processed bytes
+        return strlen($data); // Return the number of processed bytes
     }
 
     /**
      * @param $rawResponse
      * @return void
      */
-    private function handleFullMessage($rawResponse): void
+    private function streamRawResponseHandler($rawResponse): void
     {
         $decodedResponse = json_decode($rawResponse, true);
+
         // Here you can process each full message block
         if(isset($decodedResponse['choices'][0]['delta']['content'])) {
             echo $decodedResponse['choices'][0]['delta']['content'];
         } else {
             echo PHP_EOL;
         }
-//        echo json_encode($decodedResponse).PHP_EOL;
-        ob_flush();
     }
 }
