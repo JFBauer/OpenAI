@@ -12,7 +12,7 @@ class ChatCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'openai:chat {--q|question= : The initial question you want to ask the assistant}';
+    protected $signature = 'openai:chat {--initialQuestion= : The initial question you want to ask the assistant}';
 
     /**
      * The console command description.
@@ -30,8 +30,8 @@ class ChatCommand extends Command
         $messages = [];
 
         // If the user provided a question as an option, add it to the $messages array, if not, ask the user for a question
-        if ($this->option('question')) {
-            $initialQuestionContent = $this->option('question');
+        if ($this->option('initialQuestion')) {
+            $initialQuestionContent = $this->option('initialQuestion');
         } else {
             $initialQuestionContent = $this->ask('Please enter your initial question');
         }
