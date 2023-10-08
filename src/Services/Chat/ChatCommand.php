@@ -67,6 +67,6 @@ class ChatCommand extends Command
     }
 
     public function deltaContentHandler($deltaContent) {
-        echo '   '.$deltaContent;
+        echo str_replace('\n', '\n   ',$deltaContent);
     }
 }
