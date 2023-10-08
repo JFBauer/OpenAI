@@ -86,10 +86,11 @@ class ChatClient
     }
 
     /**
+     * @param $ch
      * @param $dataChunk
-     * @return void
+     * @return int
      */
-    private function processStreamData($dataChunk): void
+    private function processStreamData($ch, $dataChunk): int
     {
         $this->dataBuffer .= $dataChunk;
 
@@ -103,6 +104,8 @@ class ChatClient
 
         // Remove the matched patterns from the buffer
         $this->dataBuffer = preg_replace($pattern, '', $this->dataBuffer);
+
+        return strlen($dataChunk); // Return the number of processed bytes
     }
 
     /**
