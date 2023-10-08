@@ -45,6 +45,7 @@ class ChatCommand extends Command
         // Loop through the messages array until the user types "exit"
         do {
             // Ask OpenAI for a response and add it to the $messages array
+            $this->info('assistant');
             $responseMessage = ChatClient::chatStreamResponse($messages);
             $messages[] = $responseMessage;
 
@@ -52,14 +53,8 @@ class ChatCommand extends Command
             echo PHP_EOL;
 
             // Ask the user for a follow-up question or reply
-            $followUp = $this->ask('Please enter your follow-up question or reply (or type "exit" to end)');
-            $this->info('assistant');
+            $followUp = $this->ask('user:');
             echo $followUp;
-
-            // If the user types "exit", break out of the loop
-            if (strtolower($followUp) === 'exit') {
-                break;
-            }
 
             // Add the follow-up question to the $messages array
             $followUpMessage = new \stdClass();
