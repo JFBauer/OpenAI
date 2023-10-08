@@ -2,6 +2,11 @@
 
 namespace JFBauer\OpenAI\Facades;
 
+/**
+ * Class ChatClient
+ * @mixin \JFBauer\OpenAI\Services\Chat\ChatClient
+ * @package JFBauer\OpenAI\Facades
+ */
 class ChatClient extends \Illuminate\Support\Facades\Facade
 {
     /**
