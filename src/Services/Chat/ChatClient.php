@@ -11,7 +11,8 @@ class ChatClient
     protected string $baseUrl = 'https://api.openai.com';
     protected string|null $apiKey;
     private $dataBuffer = "";
-    private $streamResponse = "";
+    private $streamRole = "";
+    private $streamContent = "";
 
     /**
      * @param $apiKey
@@ -59,14 +60,14 @@ class ChatClient
 
     /**
      * @param $messages
-     * @param callable|null $streamRawResponseHandler
+     * @param callable|null $deltaContentHandler
      * @param ChatOptions|null $options
-     * @return string
+     * @return \stdClass
      */
-    public function chatStreamResponse($messages, callable $streamRawResponseHandler = null, ChatOptions $options = null)
+    public function chatStreamResponse($messages, callable $deltaContentHandler = null, ChatOptions $options = null)
     {
-        if(!isset($streamRawResponseHandler)) {
-            $streamRawResponseHandler = [$this, 'streamRawResponseHandler'];
+        if(!isset($deltaContentHandler)) {
+            $deltaContentHandler = [$this, 'deltaContentHandler'];
         }
 
         if(!isset($options)) {
@@ -79,8 +80,8 @@ class ChatClient
 
         $ch = curl_init($this->baseUrl.'/v1/chat/completions');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($ch, $data) use ($streamRawResponseHandler) {
-            $this->processStreamData($data, $streamRawResponseHandler);
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($ch, $data) use ($deltaContentHandler) {
+            $this->processStreamData($data, $deltaContentHandler);
             return strlen($data);
         });
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -93,7 +94,11 @@ class ChatClient
         curl_exec($ch);
         curl_close($ch);
 
-        return $this->streamResponse;
+        $responseMessage = new \stdClass();
+        $responseMessage->role = $this->streamRole;
+        $responseMessage->content = $this->streamContent;
+
+        return $responseMessage;
     }
 
     /**
@@ -101,7 +106,7 @@ class ChatClient
      * @param callable $streamRawResponseHandler
      * @return int
      */
-    private function processStreamData($data, callable $streamRawResponseHandler): int
+    private function processStreamData($data, callable $deltaContentHandler): int
     {
         $this->dataBuffer .= $data;
 
@@ -110,7 +115,7 @@ class ChatClient
 
         // Handle all matched full messages
         foreach ($matches[1] as $rawResponse) {
-            $streamRawResponseHandler($rawResponse);
+            $this->streamRawResponseHandler($rawResponse, $deltaContentHandler);
         }
 
         // Remove the matched patterns from the buffer
@@ -123,19 +128,26 @@ class ChatClient
      * @param $rawResponse
      * @return void
      */
-    private function streamRawResponseHandler($rawResponse): void
+    private function streamRawResponseHandler($rawResponse, $deltaContentHandler): void
     {
         $decodedResponse = json_decode($rawResponse, true);
 
-        if(!isset($decodedResponse['choices'][0]['delta']['content'])) {
-            echo PHP_EOL;
-            return;
+        if(isset($decodedResponse['choices'][0]['delta']['role'])) {
+            $deltaRole = $decodedResponse['choices'][0]['delta']['role'];
+            $this->streamRole .= $deltaRole;
         }
 
-        $content = $decodedResponse['choices'][0]['delta']['content'];
+        if(isset($decodedResponse['choices'][0]['delta']['content'])) {
+            $deltaContent = $decodedResponse['choices'][0]['delta']['content'];
+            $this->streamContent .= $deltaContent;
+        }
 
-        // Here you can process each full message block
-        echo $content;
-        $this->streamResponse .= $content;
+        if(isset($deltaContent)) {
+            $deltaContentHandler($deltaContent);
+        }
+    }
+
+    private function deltaContentHandler($deltaContent) {
+        echo $deltaContent;
     }
 }
