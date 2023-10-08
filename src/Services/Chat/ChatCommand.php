@@ -49,15 +49,14 @@ class ChatCommand extends Command
             echo ' > ';
 
             // Ask OpenAI for a response and add it to the $messages array
-            $responseMessage = ChatClient::chatStreamResponse($messages);
+            $responseMessage = ChatClient::chatStreamResponse($messages, [$this, 'deltaContentHandler']);
             $messages[] = $responseMessage;
 
             // Printing a whiteline to separate the assistant's response from the user's follow-up question or reply
             echo PHP_EOL;
 
             // Ask the user for a follow-up question or reply
-            $followUp = $this->ask('user:');
-            echo $followUp;
+            $followUp = $this->ask('user');
 
             // Add the follow-up question to the $messages array
             $followUpMessage = new \stdClass();
@@ -67,20 +66,7 @@ class ChatCommand extends Command
         } while (true);
     }
 
-
-    /**
-     * @param $rawResponse
-     * @return void
-     */
-    public function streamRawResponseHandler($rawResponse): void
-    {
-        $decodedResponse = json_decode($rawResponse, true);
-
-        // Here you can process each full message block
-        if(isset($decodedResponse['choices'][0]['delta']['content'])) {
-            echo $decodedResponse['choices'][0]['delta']['content'];
-        } else {
-            echo PHP_EOL;
-        }
+    public function deltaContentHandler($deltaContent) {
+        echo '   '.$deltaContent;
     }
 }
