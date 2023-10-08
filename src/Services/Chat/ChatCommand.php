@@ -37,7 +37,6 @@ class ChatCommand extends Command
         }
 
         // Add the initial question to the $messages array
-        $initialQuestionContent = $this->argument('question');
         $initialMessage = new \stdClass();
         $initialMessage->role = "user";
         $initialMessage->content = $initialQuestionContent;
