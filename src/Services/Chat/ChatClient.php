@@ -32,9 +32,13 @@ class ChatClient
      * @param ChatOptions $options
      * @return mixed
      */
-    public function chatFullResponse($messages, ChatOptions $options)
+    public function chatFullResponse($messages, ChatOptions $options = null)
     {
         $client = new Client();
+
+        if(!isset($options)) {
+            $options = new ChatOptions();
+        }
 
         $jsonData = $options->toArray();
         $jsonData['messages'] = $messages;
@@ -58,9 +62,13 @@ class ChatClient
      * @param ChatOptions $options
      * @return mixed
      */
-    public function chatStreamResponse($messages, ChatOptions $options)
+    public function chatStreamResponse($messages, ChatOptions $options = null)
     {
         $client = new Client();
+
+        if(!isset($options)) {
+            $options = new ChatOptions();
+        }
 
         $jsonData = $options->toArray();
         $jsonData['messages'] = $messages;
