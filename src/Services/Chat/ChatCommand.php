@@ -44,8 +44,11 @@ class ChatCommand extends Command
 
         // Loop through the messages array until the user types "exit"
         do {
+            // Add some additional output to make the conversation more readable
+            $this->info(' assistant: ');
+            echo ' > ';
+
             // Ask OpenAI for a response and add it to the $messages array
-            $this->info('assistant');
             $responseMessage = ChatClient::chatStreamResponse($messages);
             $messages[] = $responseMessage;
 
