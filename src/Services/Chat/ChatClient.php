@@ -81,7 +81,6 @@ class ChatClient
             $this->processStreamData($data, $streamRawResponseHandler);
             return strlen($data);
         });
-        curl_setopt($ch, CURLOPT_WRITEFUNCTION, [$this, 'processStreamData']);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Authorization: Bearer ' . $this->apiKey,
             'Content-Type: application/json'
