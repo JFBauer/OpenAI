@@ -26,10 +26,19 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
+        // Merge the config file
         $this->mergeConfigFrom(
             __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'openai.php', 'openai'
         );
 
+        // Register the commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \JFBauer\OpenAI\Services\Chat\ChatCommand::class,
+            ]);
+        }
+
+        // Register the ChatClient singleton
         $this->app->singleton('JFBauer\OpenAI\Services\Chat\ChatClient', function () {
             return new ChatClient(config('openai.api_key'));
         });
