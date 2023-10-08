@@ -33,7 +33,7 @@ class ChatCommand extends Command
         if ($this->option('initialQuestion')) {
             $initialQuestionContent = $this->option('initialQuestion');
         } else {
-            $initialQuestionContent = $this->ask('Please enter your initial question');
+            $initialQuestionContent = $this->ask('user');
         }
 
         // Add the initial question to the $messages array
@@ -50,6 +50,7 @@ class ChatCommand extends Command
 
             // Ask the user for a follow-up question or reply
             $followUp = $this->ask('Please enter your follow-up question or reply (or type "exit" to end)');
+            $this->info('assistant');
             echo $followUp;
 
             // If the user types "exit", break out of the loop
