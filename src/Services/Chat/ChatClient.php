@@ -4,6 +4,10 @@ namespace JFBauer\OpenAI\Services\Chat;
 
 use GuzzleHttp\Client;
 
+/**
+ * Class ChatClient
+ * @package JFBauer\OpenAI\Services\Chat
+ */
 class ChatClient
 {
     protected string $baseUrl = 'https://api.openai.com';
@@ -11,8 +15,8 @@ class ChatClient
     private $dataBuffer = "";
 
     /**
-     * @param $clientId
-     * @param $clientSecret
+     * @param $apiKey
+     * @throws \Exception
      */
     public function __construct($apiKey)
     {
@@ -23,6 +27,11 @@ class ChatClient
         }
     }
 
+    /**
+     * @param $messages
+     * @param ChatOptions $options
+     * @return mixed
+     */
     public function chatFullResponse($messages, ChatOptions $options)
     {
         $client = new Client();
@@ -44,6 +53,11 @@ class ChatClient
         return $decodedResponse;
     }
 
+    /**
+     * @param $messages
+     * @param ChatOptions $options
+     * @return void
+     */
     public function chatStreamResponse($messages, ChatOptions $options)
     {
         $client = new Client();
@@ -71,6 +85,10 @@ class ChatClient
         }
     }
 
+    /**
+     * @param $dataChunk
+     * @return void
+     */
     private function processStreamData($dataChunk) {
         $this->dataBuffer .= $dataChunk;
 
@@ -86,6 +104,10 @@ class ChatClient
         $this->dataBuffer = preg_replace($pattern, '', $this->dataBuffer);
     }
 
+    /**
+     * @param $rawResponse
+     * @return void
+     */
     private function handleFullMessage($rawResponse) {
         $decodedResponse = json_decode($rawResponse, true);
         // Here you can process each full message block
