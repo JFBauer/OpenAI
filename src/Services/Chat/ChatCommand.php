@@ -48,6 +48,9 @@ class ChatCommand extends Command
             $responseMessage = ChatClient::chatStreamResponse($messages);
             $messages[] = $responseMessage;
 
+            // Printing a whiteline to separate the assistant's response from the user's follow-up question or reply
+            echo PHP_EOL;
+
             // Ask the user for a follow-up question or reply
             $followUp = $this->ask('Please enter your follow-up question or reply (or type "exit" to end)');
             $this->info('assistant');
