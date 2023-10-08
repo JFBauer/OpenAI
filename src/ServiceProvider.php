@@ -3,6 +3,7 @@
 namespace JFBauer\OpenAI;
 
 use JFBauer\OpenAI\Services\Chat\ChatClient;
+use JFBauer\OpenAI\Services\Chat\ChatCommand;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -34,7 +35,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
         // Register the commands
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \JFBauer\OpenAI\Services\Chat\ChatCommand::class,
+                ChatCommand::class,
             ]);
         }
 
