@@ -29,7 +29,7 @@ class ChatClient
 
     /**
      * @param $messages
-     * @param ChatOptions $options
+     * @param ChatOptions|null $options
      * @return mixed
      */
     public function chatFullResponse($messages, ChatOptions $options = null)
@@ -59,7 +59,7 @@ class ChatClient
 
     /**
      * @param $messages
-     * @param ChatOptions $options
+     * @param ChatOptions|null $options
      * @return mixed
      */
     public function chatStreamResponse($messages, ChatOptions $options = null)
@@ -99,7 +99,8 @@ class ChatClient
      * @param $dataChunk
      * @return void
      */
-    private function processStreamData($dataChunk) {
+    private function processStreamData($dataChunk): void
+    {
         $this->dataBuffer .= $dataChunk;
 
         $pattern = '/data: ({.*?}]})\n/';
@@ -118,7 +119,8 @@ class ChatClient
      * @param $rawResponse
      * @return void
      */
-    private function handleFullMessage($rawResponse) {
+    private function handleFullMessage($rawResponse): void
+    {
         $decodedResponse = json_decode($rawResponse, true);
         // Here you can process each full message block
         echo $decodedResponse['choices'][0]['message']['content'].PHP_EOL;
