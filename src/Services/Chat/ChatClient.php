@@ -56,7 +56,7 @@ class ChatClient
     /**
      * @param $messages
      * @param ChatOptions $options
-     * @return void
+     * @return mixed
      */
     public function chatStreamResponse($messages, ChatOptions $options)
     {
@@ -83,6 +83,8 @@ class ChatClient
                 $this->processStreamData($dataChunk);
             }
         }
+
+        return $stream;
     }
 
     /**
