@@ -31,6 +31,10 @@ class ChatCommand extends Command
 
         // If the user provided a question as an option, add it to the $messages array, if not, ask the user for a question
         if ($this->option('initialQuestion')) {
+            // Add some additional output to make the conversation more readable
+            echo PHP_EOL;
+            $this->info(' user: ');
+            echo ' > '.$this->option('initialQuestion').PHP_EOL.PHP_EOL;
             $initialQuestionContent = $this->option('initialQuestion');
         } else {
             $initialQuestionContent = $this->ask('user');
