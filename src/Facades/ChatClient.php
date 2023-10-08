@@ -2,7 +2,7 @@
 
 namespace JFBauer\OpenAI\Facades;
 
-class OpenAI extends \Illuminate\Support\Facades\Facade
+class ChatClient extends \Illuminate\Support\Facades\Facade
 {
     /**
      * Get the registered name of the component.
@@ -11,6 +11,6 @@ class OpenAI extends \Illuminate\Support\Facades\Facade
      */
     protected static function getFacadeAccessor()
     {
-        return \JFBauer\OpenAI\OpenAI::class;
+        return \JFBauer\OpenAI\Services\Chat\ChatClient::class;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace JFBauer\OpenAI;
 
+use JFBauer\OpenAI\Services\Chat\ChatClient;
+
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     /**
@@ -28,8 +30,8 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'openai.php', 'openai'
         );
 
-        $this->app->singleton('JFBauer\OpenAI\OpenAI', function () {
-            return new OpenAI(config('openai.api_key'));
+        $this->app->singleton('JFBauer\OpenAI\Services\Chat\ChatClient', function () {
+            return new ChatClient(config('openai.api_key'));
         });
     }
 }

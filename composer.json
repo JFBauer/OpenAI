@@ -24,7 +24,7 @@
                 "JFBauer\\OpenAI\\ServiceProvider"
             ],
             "aliases": {
-                "OpenAI": "JFBauer\\OpenAI\\Facade"
+                "OpenAI": "ChatClient"
             }
         }
     }
