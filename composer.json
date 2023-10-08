@@ -1,6 +1,7 @@
 {
     "name": "jfbauer/openai",
     "description": "This package gives you access to all the API necessary functionalities from OpenAI.",
+    "license": "MIT",
     "type": "library",
     "authors": [
         {
