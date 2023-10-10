@@ -47,7 +47,8 @@ class QueryAnalyzer
 
     public static function returnPromptForAnalysisOfRawQuery(string $rawQuery, $connection = null)
     {
-        $prompt = "This is the SQL query for which we want to improve the performance: $rawQuery".PHP_EOL.PHP_EOL;
+        $prompt = "This is the SQL query for which we want to improve the performance:".PHP_EOL.$rawQuery.PHP_EOL.PHP_EOL;
+        $prompt .= "This is the Explain plan for the query:".PHP_EOL.self::returnExplanationOfRawQuery($rawQuery, $connection).PHP_EOL.PHP_EOL;
 
         return $prompt;
     }
