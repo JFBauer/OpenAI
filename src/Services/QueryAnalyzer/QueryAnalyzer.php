@@ -3,7 +3,7 @@
 namespace JFBauer\OpenAI\Services\QueryAnalyzer;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class QueryAnalyzer
 {
