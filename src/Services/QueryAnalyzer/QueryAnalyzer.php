@@ -12,7 +12,7 @@ class QueryAnalyzer
         return DB::connection($connection)->select($rawQuery);
     }
 
-    function getRawQueryFromQueryBuilderObject(Builder $queryBuilderObject)
+    public static function getRawQueryFromQueryBuilderObject(Builder $queryBuilderObject)
     {
         // Get the raw SQL query and bindings
         $sqlQuery = $queryBuilderObject->toSql();
