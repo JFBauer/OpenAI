@@ -11,7 +11,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "laravel/framework": "^8.0|^10.10",
+        "laravel/framework": "^8.0 || ^10.10",
         "ext-curl": "*"
     },
     "autoload": {
