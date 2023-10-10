@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 class QueryAnalyzer
 {
     public static function executeRawQuery(string $rawQuery, $connection = null) {
-        $connection ??= config('database.default');
+        $connection = $connection ?? config('database.default');
         return DB::connection($connection)->select($rawQuery);
     }
 
@@ -40,8 +40,8 @@ class QueryAnalyzer
 
     public static function returnExplanationOfRawQuery(string $rawQuery, $connection = null)
     {
-        $connection ??= config('database.default');
-        $query = DB::connection($connection)->select("EXPLAIN $rawQuery");
+        $connection = $connection ?? config('database.default');
+        $query = "EXPLAIN $rawQuery";
         return self::executeRawQuery($query, $connection);
     }
 
