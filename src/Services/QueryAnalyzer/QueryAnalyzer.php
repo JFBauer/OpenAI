@@ -24,4 +24,31 @@ class QueryAnalyzer
         return $fullSqlQuery;
     }
 
+    public static function executeQueryBuilderObject(Builder $queryBuilderObject)
+    {
+        $rawQuery = self::getRawQueryFromQueryBuilderObject($queryBuilderObject);
+        return self::executeRawQuery($rawQuery, $queryBuilderObject->getConnection());
+    }
+
+    public static function returnExecutionTimeOfRawQuery(string $rawQuery, $connection = null)
+    {
+        $startTime = microtime(true);
+        self::executeRawQuery($rawQuery, $connection);
+        $endTime = microtime(true);
+        return $endTime - $startTime;
+    }
+
+    public static function returnExplanationOfRawQuery(string $rawQuery, $connection = null)
+    {
+        $connection ??= config('database.default');
+        $query = DB::connection($connection)->select("EXPLAIN $rawQuery");
+        return self::executeRawQuery($query, $connection);
+    }
+
+    public static function returnPromptForAnalysisOfRawQuery(string $rawQuery, $connection = null)
+    {
+        $prompt = "This is the SQL query for which we want to improve the performance: $rawQuery".PHP_EOL.PHP_EOL;
+
+        return $prompt;
+    }
 }
