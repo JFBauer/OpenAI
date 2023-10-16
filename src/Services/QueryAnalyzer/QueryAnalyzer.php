@@ -51,18 +51,18 @@ class QueryAnalyzer
         $tablesArray = self::getTableNamesFromExplainQuery($explainResults);
         $databaseSchemas = self::getDatabaseSchemasForTables($tablesArray);
 
-        $prompt = "You are a an expert in SQL database, we have a query which needs optimizing. We will provide you all the info you need below step by step.\n\n";
-        $prompt .= "<pre>This is the SQL query for which we want to improve the performance:\n".$rawQuery."\n\n";
+        $prompt = "<pre>You are a an expert in SQL database, we have a query which needs optimizing. We will provide you all the info you need below step by step.\n\n";
+        $prompt .= "This is the SQL query for which we want to improve the performance:\n".$rawQuery."\n\n";
         $prompt .= "This is the Explain plan for the query:\n</pre>".print_r($explainResults, true)."\n\n";
         $prompt .= "<pre>These are all the unique tables used in the query:\n</pre>".print_r($tablesArray, true)."\n\n";
         $prompt .= "<pre>This is all the info regarding the tables:\n</pre>".print_r($databaseSchemas['tables'], true)."\n\n";
 //        $prompt .= "<pre>This is all the info regarding the columns:\n</pre>".print_r($databaseSchemas['columns'], true)."\n\n";
         $prompt .= "<pre>This is all the info regarding the indexes:\n</pre>".print_r($databaseSchemas['indexes'], true)."\n\n";
-        $prompt .= "I would like for you to split your advice into 3 parts, of course it could be that there's no suggestions in some of these categories or maybe in all. Please give all the suggestions that you have that you know would likely help.\n";
+        $prompt .= "<pre>I would like for you to split your advice into 3 parts, of course it could be that there's no suggestions in some of these categories or maybe in all. Please give all the suggestions that you have that you know would likely help.\n";
         $prompt .= "Please add an extensive explanation for each of your suggestions as to why it's a good idea and which information led you to make the suggestion so that I might learn what to look for:\n";
         $prompt .= "1st. Give a list of suggestions to make into indexes, please mention explicitly if a suggested index is a composite index.\n";
         $prompt .= "2nd. Give a list of suggestions to change the query (and why), include a copy of the new suggested query at the end here. Make sure to keep into account that moving subqueries into joins could cause a multiplication of rows. If you need more info regarding the relationship between specific tables please ask me about them instead of making assumptions!\n";
-        $prompt .= "3rd. Give a list of more advanced suggestions, this could include moving calculated parts in the select to be pre-calculated or other suggestions which need a combination of changes in the database, code or other places. Again, if you need more info to make a certain suggestion please ask me about it!";
+        $prompt .= "3rd. Give a list of more advanced suggestions, this could include moving calculated parts in the select to be pre-calculated or other suggestions which need a combination of changes in the database, code or other places. Again, if you need more info to make a certain suggestion please ask me about it!</pre>";
 
         return $prompt;
     }
